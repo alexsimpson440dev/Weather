@@ -12,4 +12,5 @@
     <string name="humidity_percentage">100%</string>
     <string name="pressure">Pressure</string>
     <string name="pressure_value">1023 hPa</string>
+    <string name="degree_symbol">°</string>
 </resources>
