@@ -9,8 +9,6 @@ import com.ics342.weather.domains.ForecastTemp
 
 class ForecastActivity : AppCompatActivity() {
 
-
-
     lateinit var recyclerView: RecyclerView
     private val adapterData = listOf(
         DayForecast(1L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
@@ -38,6 +36,6 @@ class ForecastActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        recyclerView.adapter = ForecastAdapter(adapterData)
+        recyclerView.adapter = ForecastAdapter(adapterData, this)
     }
 }
