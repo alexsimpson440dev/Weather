@@ -20,7 +20,7 @@ class ForecastAdapter(
     @SuppressLint("NewApi")
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val dateFormat = DateTimeFormatter.ofPattern("MMM dd")
-        private val timeFormat = DateTimeFormatter.ofPattern("HH:mm")
+        private val timeFormat = DateTimeFormatter.ofPattern("h:mma")
 
         private val dateView: TextView = view.findViewById(R.id.date)
         private val currentTempView: TextView = view.findViewById(R.id.current_temp)
@@ -35,8 +35,8 @@ class ForecastAdapter(
             currentTempView.text = currentTempView.context.getString(R.string.temp, data.temp.day)
             highTempView.text = highTempView.context.getString(R.string.high_colon, data.temp.max)
             lowTempView.text = lowTempView.context.getString(R.string.low_colon, data.temp.min)
-            sunriseTimeView.text = sunriseTimeView.context.getString(R.string.sunrise, timeFormat.format(data.sunrise.getDateTime()))
-            sunsetTimeView.text = sunsetTimeView.context.getString(R.string.sunset, timeFormat.format(data.sunset.getDateTime()))
+            sunriseTimeView.text = sunriseTimeView.context.getString(R.string.sunrise, timeFormat.format(data.sunrise.getDateTime()).lowercase())
+            sunsetTimeView.text = sunsetTimeView.context.getString(R.string.sunset, timeFormat.format(data.sunset.getDateTime()).lowercase())
         }
     }
 

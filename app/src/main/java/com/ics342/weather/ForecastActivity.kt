@@ -11,22 +11,22 @@ class ForecastActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView
     private val adapterData = listOf(
-        DayForecast(1L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(2L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5),
-        DayForecast(3L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(4L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5),
-        DayForecast(5L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(6L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5),
-        DayForecast(7L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(8L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5),
-        DayForecast(9L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(10L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5),
-        DayForecast(11L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(12L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5),
-        DayForecast(13L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(14L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5),
-        DayForecast(15L, 2L, 3L, ForecastTemp(69F, 65F, 85F), 1F, 5),
-        DayForecast(16L, 2L, 3L, ForecastTemp(70F, 65F, 88F), 1F, 5)
+        DayForecast(1644148800L, 1644148800L, 1645498800, ForecastTemp(69F, 62F, 85F)),
+        DayForecast(1644235200L, 1644148800L, 1645498800, ForecastTemp(70F, 65F, 88F)),
+        DayForecast(1644321600L, 1644148800L, 1645498800, ForecastTemp(71F, 70F, 90F)),
+        DayForecast(1644408000L, 1644148800L, 1645498800, ForecastTemp(70F, 75F, 80F)),
+        DayForecast(1644494400L, 1644148800L, 1645498800, ForecastTemp(85F, 80F, 86F)),
+        DayForecast(1644580800L, 1644148800L, 1645498800, ForecastTemp(88F, 83F, 85F)),
+        DayForecast(1644667200L, 1644148800L, 1645498800, ForecastTemp(66F, 66F, 75F)),
+        DayForecast(1644753600L, 1644148800L, 1645498800, ForecastTemp(72F, 70F, 76F)),
+        DayForecast(1644840000L, 1644148800L, 1645498800, ForecastTemp(75F, 65F, 75F)),
+        DayForecast(1644926400L, 1644148800L, 1645498800, ForecastTemp(79F, 70F, 80F)),
+        DayForecast(1645012800L, 1644148800L, 1645498800, ForecastTemp(68F, 65F, 70F)),
+        DayForecast(1645099200L, 1644148800L, 1645498800, ForecastTemp(70F, 69F, 71F)),
+        DayForecast(1645185600L, 1644148800L, 1645498800, ForecastTemp(69F, 55F, 69F)),
+        DayForecast(1645272000L, 1644148800L, 1645498800, ForecastTemp(73F, 70F, 74F)),
+        DayForecast(1645358400L, 1644148800L, 1645498800, ForecastTemp(79F, 74F, 80F)),
+        DayForecast(1645444800L, 1644148800L, 1645498800, ForecastTemp(85F, 80F, 86F))
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
