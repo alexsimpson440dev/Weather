@@ -2,7 +2,6 @@ package com.ics342.weather
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -35,14 +34,20 @@ class ForecastAdapter(
             currentTempView.text = currentTempView.context.getString(R.string.temp, data.temp.day)
             highTempView.text = highTempView.context.getString(R.string.high_colon, data.temp.max)
             lowTempView.text = lowTempView.context.getString(R.string.low_colon, data.temp.min)
-            sunriseTimeView.text = sunriseTimeView.context.getString(R.string.sunrise, timeFormat.format(data.sunrise.getDateTime()).lowercase())
-            sunsetTimeView.text = sunsetTimeView.context.getString(R.string.sunset, timeFormat.format(data.sunset.getDateTime()).lowercase())
+            sunriseTimeView.text = sunriseTimeView.context.getString(
+                R.string.sunrise,
+                timeFormat.format(data.sunrise.getDateTime()).lowercase()
+            )
+            sunsetTimeView.text = sunsetTimeView.context.getString(
+                R.string.sunset,
+                timeFormat.format(data.sunset.getDateTime()).lowercase()
+            )
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.forecast_data, parent, false)
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.forecast_data, parent, false)
 
         return ViewHolder(view)
     }
