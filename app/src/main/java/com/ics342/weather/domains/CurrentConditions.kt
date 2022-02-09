@@ -1,5 +1,7 @@
 package com.ics342.weather.domains
 
+import com.squareup.moshi.Json
+
 data class CurrentConditions(
     val name: String,
     val main: Main,
@@ -15,9 +17,9 @@ data class Weather(
 
 data class Main(
     val temp: Float,
-    val feelsLike: Float,
-    val tempMin: Float,
-    val tempMax: Float,
+    @Json(name = "feels_like") val feelsLike: Float,
+    @Json(name = "temp_min") val tempMin: Float,
+    @Json(name = "temp_max") val tempMax: Float,
     val pressure: Int,
     val humidity: Int
 )

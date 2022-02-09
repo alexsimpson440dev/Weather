@@ -13,6 +13,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        locationName = findViewById(R.id.location_name)
+        currentTemp = findViewById(R.id.temperature)
         forecastButton = findViewById(R.id.forecastButton)
         forecastButton.setOnClickListener {
             startActivity(Intent(this, ForecastActivity::class.java))
@@ -36,11 +39,11 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("something")
+            .baseUrl("https://api.openweathermap.org/data/2.5/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
 
-        api = retrofit.create(Api:class.java)
+        api = retrofit.create(Api::class.java)
     }
 
     override fun onResume() {
@@ -65,9 +68,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun bindData(currentConditions: CurrentConditions) {
         locationName.text = currentConditions.name
-        currentTemp.text = getString(R.string.temp, currentConditions.main.temp)
+        currentTemp.text = getString(R.string.temperature, currentConditions.main.temp)
         val iconName = currentConditions.weather.firstOrNull()?.icon
         val iconUrl = "urlsforpichere"
-        Glide stuff here
+        // stuff here
     }
 }
