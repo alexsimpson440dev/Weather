@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.ics342.weather.domains.CurrentConditions
@@ -18,8 +19,11 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var api: Api
+
     private lateinit var locationName: TextView
     private lateinit var currentTemp: TextView
+    private lateinit var conditionIcon: ImageView
+
     private lateinit var forecastButton: Button
 
 
@@ -29,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
         locationName = findViewById(R.id.location_name)
         currentTemp = findViewById(R.id.temperature)
+        conditionIcon = findViewById(R.id.condition_icon)
+
         forecastButton = findViewById(R.id.forecastButton)
         forecastButton.setOnClickListener {
             startActivity(Intent(this, ForecastActivity::class.java))
@@ -70,7 +76,9 @@ class MainActivity : AppCompatActivity() {
         locationName.text = currentConditions.name
         currentTemp.text = getString(R.string.temperature, currentConditions.main.temp)
         val iconName = currentConditions.weather.firstOrNull()?.icon
-        val iconUrl = "urlsforpichere"
-        // stuff here
+        val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
+        Glide.with(this)
+            .load(iconUrl)
+            .into(conditionIcon)
     }
 }
