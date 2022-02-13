@@ -23,6 +23,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var locationName: TextView
     private lateinit var currentTemp: TextView
     private lateinit var conditionIcon: ImageView
+    private lateinit var feelsLike: TextView
+    private lateinit var lowTemp: TextView
+    private lateinit var highTemp: TextView
+    private lateinit var humidity: TextView
+    private lateinit var pressure: TextView
 
     private lateinit var forecastButton: Button
 
@@ -34,6 +39,12 @@ class MainActivity : AppCompatActivity() {
         locationName = findViewById(R.id.location_name)
         currentTemp = findViewById(R.id.temperature)
         conditionIcon = findViewById(R.id.condition_icon)
+        feelsLike = findViewById(R.id.feels_like)
+        lowTemp = findViewById(R.id.low)
+        highTemp = findViewById(R.id.high)
+        humidity = findViewById(R.id.humidity)
+        pressure = findViewById(R.id.pressure)
+
 
         forecastButton = findViewById(R.id.forecastButton)
         forecastButton.setOnClickListener {
@@ -75,6 +86,11 @@ class MainActivity : AppCompatActivity() {
     private fun bindData(currentConditions: CurrentConditions) {
         locationName.text = currentConditions.name
         currentTemp.text = getString(R.string.temperature, currentConditions.main.temp)
+        feelsLike.text = getString(R.string.feels_like, currentConditions.main.feelsLike)
+        lowTemp.text = getString(R.string.low, currentConditions.main.tempMin)
+        highTemp.text = getString(R.string.high, currentConditions.main.tempMax)
+        humidity.text = getString(R.string.humidity, currentConditions.main.humidity)
+        pressure.text = getString(R.string.pressure, currentConditions.main.pressure)
         val iconName = currentConditions.weather.firstOrNull()?.icon
         val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
         Glide.with(this)
