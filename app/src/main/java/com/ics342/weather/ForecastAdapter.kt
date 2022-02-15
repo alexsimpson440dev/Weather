@@ -30,7 +30,7 @@ class ForecastAdapter(
 
 
         fun bind(data: DayForecast) {
-            dateView.text = dateFormat.format(data.date.getDateTime())
+            dateView.text = dateFormat.format(data.dt.getDateTime())
             currentTempView.text = currentTempView.context.getString(R.string.temp, data.temp.day)
             highTempView.text = highTempView.context.getString(R.string.high_colon, data.temp.max)
             lowTempView.text = lowTempView.context.getString(R.string.low_colon, data.temp.min)
