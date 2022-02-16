@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.ics342.weather.domains.DayForecast
 import com.ics342.weather.utils.getDateTime
 import java.time.format.DateTimeFormatter
@@ -42,6 +43,12 @@ class ForecastAdapter(
                 R.string.sunset,
                 timeFormat.format(data.sunset.getDateTime()).lowercase()
             )
+
+            val iconName = data.weather.firstOrNull()?.icon
+            val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
+            Glide.with(this)
+                .load(iconUrl)
+                .into(conditionIcon)
         }
     }
 

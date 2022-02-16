@@ -1,6 +1,6 @@
 package com.ics342.weather.domains
 
-data class DailyForecast16Days(
+data class Forecast(
     val list: List<DayForecast>
 )
 

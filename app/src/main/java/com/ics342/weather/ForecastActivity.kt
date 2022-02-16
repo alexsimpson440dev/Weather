@@ -4,11 +4,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.ics342.weather.domains.DailyForecast16Days
+import com.ics342.weather.domains.Forecast
 import com.ics342.weather.domains.DayForecast
-import com.ics342.weather.domains.ForecastTemp
-import com.ics342.weather.domains.Weather
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Call
@@ -21,6 +18,7 @@ class ForecastActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private var adapterData = mutableListOf<DayForecast>()
+    private lateinit var adapter: ForecastAdapter
     private lateinit var api: Api
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,11 +26,9 @@ class ForecastActivity : AppCompatActivity() {
         setContentView(R.layout.activity_forecast)
 
         recyclerView = findViewById(R.id.recycler_view)
-        recyclerView.adapter = ForecastAdapter(adapterData, this)
+        adapter = ForecastAdapter(adapterData, this)
+        recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-
-
 
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
@@ -49,11 +45,11 @@ class ForecastActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val call: Call<DailyForecast16Days> = api.get16DayForecast("55304")
-        call.enqueue(object : Callback<DailyForecast16Days> {
+        val call: Call<Forecast> = api.getForecast("55304")
+        call.enqueue(object : Callback<Forecast> {
             override fun onResponse(
-                call: Call<DailyForecast16Days>,
-                response: Response<DailyForecast16Days>
+                call: Call<Forecast>,
+                response: Response<Forecast>
             ) {
                 val forecasts = response.body()
                 forecasts?.let {
@@ -61,23 +57,16 @@ class ForecastActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<DailyForecast16Days>, t: Throwable) {
+            override fun onFailure(call: Call<Forecast>, t: Throwable) {
                 println("An error occurred due to: $t")
             }
         })
     }
 
-    private fun bindData(dailyForecast16Days: DailyForecast16Days) {
-        dailyForecast16Days.list.forEach {
-            adapterData.add(it)
-            recyclerView.adapter?.notifyDataSetChanged()
+    private fun bindData(forecast: Forecast) {
+        for (i in 0 until forecast.list.count()) {
+            adapterData.add(forecast.list[i])
+            adapter.notifyItemInserted(i)
         }
-
-//        adapterData = dayForecasts
-//        val iconName = dayForecast.weather.firstOrNull()?.icon
-//        val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
-//        Glide.with(this)
-//            .load(iconUrl)
-//            .into(conditionIcon)
     }
 }
