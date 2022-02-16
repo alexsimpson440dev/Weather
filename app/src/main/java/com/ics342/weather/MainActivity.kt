@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         humidity = findViewById(R.id.humidity)
         pressure = findViewById(R.id.pressure)
 
-
         forecastButton = findViewById(R.id.forecastButton)
         forecastButton.setOnClickListener {
             startActivity(Intent(this, ForecastActivity::class.java))

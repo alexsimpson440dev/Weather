@@ -23,5 +23,3 @@ data class Main(
     val pressure: Int,
     val humidity: Int
 )
-
-
