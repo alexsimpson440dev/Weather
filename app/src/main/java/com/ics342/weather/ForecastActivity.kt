@@ -26,7 +26,7 @@ class ForecastActivity : AppCompatActivity() {
         setContentView(R.layout.activity_forecast)
 
         recyclerView = findViewById(R.id.recycler_view)
-        adapter = ForecastAdapter(adapterData, this)
+        adapter = ForecastAdapter(adapterData)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 

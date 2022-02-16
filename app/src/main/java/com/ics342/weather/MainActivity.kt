@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var forecastButton: Button
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -78,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<CurrentConditions>, t: Throwable) {
-
+                println("An error occurred due to: $t")
             }
         })
     }
@@ -91,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         highTemp.text = getString(R.string.high, currentConditions.main.tempMax)
         humidity.text = getString(R.string.humidity, currentConditions.main.humidity)
         pressure.text = getString(R.string.pressure, currentConditions.main.pressure)
+
         val iconName = currentConditions.weather.firstOrNull()?.icon
         val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
         Glide.with(this)

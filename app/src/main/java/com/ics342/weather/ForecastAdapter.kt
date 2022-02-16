@@ -1,10 +1,10 @@
 package com.ics342.weather
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -13,8 +13,7 @@ import com.ics342.weather.utils.getDateTime
 import java.time.format.DateTimeFormatter
 
 class ForecastAdapter(
-    private val forecastData: List<DayForecast>,
-    private val context: Context
+    private val forecastData: List<DayForecast>
 ) : RecyclerView.Adapter<ForecastAdapter.ViewHolder>() {
 
     @SuppressLint("NewApi")
@@ -22,13 +21,13 @@ class ForecastAdapter(
         private val dateFormat = DateTimeFormatter.ofPattern("MMM dd")
         private val timeFormat = DateTimeFormatter.ofPattern("h:mma")
 
+        val imageView: ImageView = view.findViewById(R.id.condition_icon)
         private val dateView: TextView = view.findViewById(R.id.date)
         private val currentTempView: TextView = view.findViewById(R.id.current_temp)
         private val highTempView: TextView = view.findViewById(R.id.high)
         private val lowTempView: TextView = view.findViewById(R.id.low)
         private val sunriseTimeView: TextView = view.findViewById(R.id.sunrise)
         private val sunsetTimeView: TextView = view.findViewById(R.id.sunset)
-
 
         fun bind(data: DayForecast) {
             dateView.text = dateFormat.format(data.dt.getDateTime())
@@ -43,12 +42,6 @@ class ForecastAdapter(
                 R.string.sunset,
                 timeFormat.format(data.sunset.getDateTime()).lowercase()
             )
-
-            val iconName = data.weather.firstOrNull()?.icon
-            val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
-            Glide.with(this)
-                .load(iconUrl)
-                .into(conditionIcon)
         }
     }
 
@@ -61,6 +54,12 @@ class ForecastAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(forecastData[position])
+
+        val iconName = forecastData[position].weather.firstOrNull()?.icon
+        val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
+        Glide.with(holder.itemView.context)
+            .load(iconUrl)
+            .into(holder.imageView)
     }
 
     override fun getItemCount() = forecastData.size
