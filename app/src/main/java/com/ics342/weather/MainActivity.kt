@@ -3,10 +3,8 @@ package com.ics342.weather
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.ics342.weather.databinding.ActivityMainBinding
 import com.ics342.weather.domains.CurrentConditions
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -19,33 +17,14 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var api: Api
-
-    private lateinit var locationName: TextView
-    private lateinit var currentTemp: TextView
-    private lateinit var conditionIcon: ImageView
-    private lateinit var feelsLike: TextView
-    private lateinit var lowTemp: TextView
-    private lateinit var highTemp: TextView
-    private lateinit var humidity: TextView
-    private lateinit var pressure: TextView
-
-    private lateinit var forecastButton: Button
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        locationName = findViewById(R.id.location_name)
-        currentTemp = findViewById(R.id.temperature)
-        conditionIcon = findViewById(R.id.condition_icon)
-        feelsLike = findViewById(R.id.feels_like)
-        lowTemp = findViewById(R.id.low)
-        highTemp = findViewById(R.id.high)
-        humidity = findViewById(R.id.humidity)
-        pressure = findViewById(R.id.pressure)
-
-        forecastButton = findViewById(R.id.forecastButton)
-        forecastButton.setOnClickListener {
+        binding.forecastButton.setOnClickListener {
             startActivity(Intent(this, ForecastActivity::class.java))
         }
 
@@ -82,18 +61,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bindData(currentConditions: CurrentConditions) {
-        locationName.text = currentConditions.name
-        currentTemp.text = getString(R.string.temperature, currentConditions.main.temp)
-        feelsLike.text = getString(R.string.feels_like, currentConditions.main.feelsLike)
-        lowTemp.text = getString(R.string.low, currentConditions.main.tempMin)
-        highTemp.text = getString(R.string.high, currentConditions.main.tempMax)
-        humidity.text = getString(R.string.humidity, currentConditions.main.humidity)
-        pressure.text = getString(R.string.pressure, currentConditions.main.pressure)
+        binding.locationName.text = currentConditions.name
+        binding.temperature.text = getString(R.string.temperature, currentConditions.main.temp)
+        binding.feelsLike.text = getString(R.string.feels_like, currentConditions.main.feelsLike)
+        binding.low.text = getString(R.string.low, currentConditions.main.tempMin)
+        binding.high.text = getString(R.string.high, currentConditions.main.tempMax)
+        binding.humidity.text = getString(R.string.humidity, currentConditions.main.humidity)
+        binding.pressure.text = getString(R.string.pressure, currentConditions.main.pressure)
 
         val iconName = currentConditions.weather.firstOrNull()?.icon
         val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
         Glide.with(this)
             .load(iconUrl)
-            .into(conditionIcon)
+            .into(binding.conditionIcon)
     }
 }
