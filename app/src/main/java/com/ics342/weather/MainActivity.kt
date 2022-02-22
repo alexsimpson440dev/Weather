@@ -6,18 +6,12 @@ import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.ics342.weather.databinding.ActivityMainBinding
 import com.ics342.weather.domains.CurrentConditions
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
+import com.ics342.weather.viewmodels.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var api: Api
     private lateinit var binding: ActivityMainBinding
+    private val viewModel = MainViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,37 +21,14 @@ class MainActivity : AppCompatActivity() {
         binding.forecastButton.setOnClickListener {
             startActivity(Intent(this, ForecastActivity::class.java))
         }
-
-        val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://api.openweathermap.org/data/2.5/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-
-        api = retrofit.create(Api::class.java)
     }
 
     override fun onResume() {
         super.onResume()
-        val call: Call<CurrentConditions> = api.getCurrentConditions("55304")
-        call.enqueue(object : Callback<CurrentConditions> {
-            override fun onResponse(
-                call: Call<CurrentConditions>,
-                response: Response<CurrentConditions>
-            ) {
-                val currentConditions = response.body()
-                currentConditions?.let {
-                    bindData(it)
-                }
-            }
-
-            override fun onFailure(call: Call<CurrentConditions>, t: Throwable) {
-                println("An error occurred due to: $t")
-            }
-        })
+        viewModel.currentConditions.observe(this) { currentConditions ->
+            bindData(currentConditions)
+        }
+        viewModel.loadData()
     }
 
     private fun bindData(currentConditions: CurrentConditions) {
