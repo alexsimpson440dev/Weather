@@ -1,10 +1,15 @@
 package com.ics342.weather.domains
 
+data class Forecast(
+    val list: List<DayForecast>
+)
+
 data class DayForecast(
-    val date: Long,
+    val dt: Long,
     val sunrise: Long,
     val sunset: Long,
     val temp: ForecastTemp,
-    val pressure: Float = 1f,
-    val humidity: Int = 0
+    val pressure: Float,
+    val humidity: Int,
+    val weather: List<Weather>
 )
