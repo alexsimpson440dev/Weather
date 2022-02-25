@@ -1,4 +1,4 @@
-package com.ics342.weather
+package com.ics342.weather.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.ics342.weather.R
 import com.ics342.weather.domains.DayForecast
 import com.ics342.weather.utils.getDateTime
 import java.time.format.DateTimeFormatter
@@ -54,6 +55,7 @@ class ForecastAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(forecastData[position])
+        this.notifyItemInserted(position)
 
         val iconName = forecastData[position].weather.firstOrNull()?.icon
         val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"

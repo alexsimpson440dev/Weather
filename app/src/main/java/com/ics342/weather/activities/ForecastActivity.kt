@@ -1,9 +1,11 @@
-package com.ics342.weather
+package com.ics342.weather.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.ics342.weather.adapters.ForecastAdapter
+import com.ics342.weather.R
 import com.ics342.weather.domains.DayForecast
 import com.ics342.weather.domains.Forecast
 import com.ics342.weather.viewmodels.ForecastViewModel
@@ -36,7 +38,6 @@ class ForecastActivity : AppCompatActivity() {
     private fun bindData(forecast: Forecast) {
         for (i in 0 until forecast.list.count()) {
             adapterData.add(forecast.list[i])
-            adapter.notifyItemInserted(i)
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.ics342.weather.viewmodels
 
 import androidx.lifecycle.MutableLiveData
-import com.ics342.weather.Api
+import com.ics342.weather.interfaces.Api
 import com.ics342.weather.domains.Forecast
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
