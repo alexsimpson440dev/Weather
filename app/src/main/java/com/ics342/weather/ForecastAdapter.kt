@@ -13,7 +13,7 @@ import com.ics342.weather.utils.getDateTime
 import java.time.format.DateTimeFormatter
 
 class ForecastAdapter(
-    private val forecastData: List<DayForecast>
+    private var forecastData: List<DayForecast>
 ) : RecyclerView.Adapter<ForecastAdapter.ViewHolder>() {
 
     @SuppressLint("NewApi")
@@ -21,7 +21,7 @@ class ForecastAdapter(
         private val dateFormat = DateTimeFormatter.ofPattern("MMM dd")
         private val timeFormat = DateTimeFormatter.ofPattern("h:mma")
 
-        val imageView: ImageView = view.findViewById(R.id.condition_icon)
+        private val imageView: ImageView = view.findViewById(R.id.condition_icon)
         private val dateView: TextView = view.findViewById(R.id.date)
         private val currentTempView: TextView = view.findViewById(R.id.current_temp)
         private val highTempView: TextView = view.findViewById(R.id.high)
@@ -42,6 +42,12 @@ class ForecastAdapter(
                 R.string.sunset,
                 timeFormat.format(data.sunset.getDateTime()).lowercase()
             )
+
+            val iconName = data.weather.firstOrNull()?.icon
+            val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
+            Glide.with(this.itemView.context)
+                .load(iconUrl)
+                .into(this.imageView)
         }
     }
 
@@ -54,13 +60,12 @@ class ForecastAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(forecastData[position])
-
-        val iconName = forecastData[position].weather.firstOrNull()?.icon
-        val iconUrl = "https://openweathermap.org/img/wn/$iconName@2x.png"
-        Glide.with(holder.itemView.context)
-            .load(iconUrl)
-            .into(holder.imageView)
     }
 
     override fun getItemCount() = forecastData.size
+
+    fun appendData(newForecastData: DayForecast) {
+        this.forecastData = this.forecastData + newForecastData
+        notifyItemInserted(this.forecastData.lastIndex)
+    }
 }

@@ -64,8 +64,7 @@ class ForecastActivity : AppCompatActivity() {
 
     private fun bindData(forecast: Forecast) {
         for (i in 0 until forecast.list.count()) {
-            adapterData.add(forecast.list[i])
-            adapter.notifyItemInserted(i)
+            adapter.appendData(forecast.list[i])
         }
     }
 }
