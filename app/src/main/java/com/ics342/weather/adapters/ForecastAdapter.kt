@@ -25,6 +25,7 @@ class ForecastAdapter(
 
         private val imageView: ImageView = binding.conditionIcon
 
+        // https://stackoverflow.com/questions/60423596/how-to-use-viewbinding-in-a-recyclerview-adapter
         fun bind(data: DayForecast) {
             binding.date.text = dateFormat.format(data.dt.getDateTime())
             binding.currentTemp.text = binding.currentTemp.context.getString(R.string.temp, data.temp.day)
