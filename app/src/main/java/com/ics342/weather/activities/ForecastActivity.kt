@@ -9,11 +9,14 @@ import com.ics342.weather.R
 import com.ics342.weather.domains.DayForecast
 import com.ics342.weather.domains.Forecast
 import com.ics342.weather.viewmodels.ForecastViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ForecastActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
-    private val viewModel = ForecastViewModel()
+    @Inject lateinit var viewModel: ForecastViewModel
     private var adapterData = mutableListOf<DayForecast>()
     private lateinit var adapter: ForecastAdapter
 
@@ -37,7 +40,7 @@ class ForecastActivity : AppCompatActivity() {
 
     private fun bindData(forecast: Forecast) {
         for (i in 0 until forecast.list.count()) {
-            adapterData.add(forecast.list[i])
+            adapter.appendData(forecast.list[i])
         }
     }
 }
