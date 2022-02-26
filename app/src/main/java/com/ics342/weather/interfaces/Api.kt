@@ -2,7 +2,6 @@ package com.ics342.weather.interfaces
 
 import com.ics342.weather.domains.CurrentConditions
 import com.ics342.weather.domains.Forecast
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
