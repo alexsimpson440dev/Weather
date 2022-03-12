@@ -1,13 +1,13 @@
-package com.ics342.weather
+package com.ics342.weather.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.ics342.weather.R
+import com.ics342.weather.databinding.ForecastDataBinding
 import com.ics342.weather.domains.DayForecast
 import com.ics342.weather.utils.getDateTime
 import java.time.format.DateTimeFormatter
@@ -17,28 +17,23 @@ class ForecastAdapter(
 ) : RecyclerView.Adapter<ForecastAdapter.ViewHolder>() {
 
     @SuppressLint("NewApi")
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(private val binding: ForecastDataBinding) : RecyclerView.ViewHolder(binding.root) {
         private val dateFormat = DateTimeFormatter.ofPattern("MMM dd")
         private val timeFormat = DateTimeFormatter.ofPattern("h:mma")
 
-        private val imageView: ImageView = view.findViewById(R.id.condition_icon)
-        private val dateView: TextView = view.findViewById(R.id.date)
-        private val currentTempView: TextView = view.findViewById(R.id.current_temp)
-        private val highTempView: TextView = view.findViewById(R.id.high)
-        private val lowTempView: TextView = view.findViewById(R.id.low)
-        private val sunriseTimeView: TextView = view.findViewById(R.id.sunrise)
-        private val sunsetTimeView: TextView = view.findViewById(R.id.sunset)
+        private val imageView: ImageView = binding.conditionIcon
 
+        // https://stackoverflow.com/questions/60423596/how-to-use-viewbinding-in-a-recyclerview-adapter
         fun bind(data: DayForecast) {
-            dateView.text = dateFormat.format(data.dt.getDateTime())
-            currentTempView.text = currentTempView.context.getString(R.string.temp, data.temp.day)
-            highTempView.text = highTempView.context.getString(R.string.high_colon, data.temp.max)
-            lowTempView.text = lowTempView.context.getString(R.string.low_colon, data.temp.min)
-            sunriseTimeView.text = sunriseTimeView.context.getString(
+            binding.date.text = dateFormat.format(data.dt.getDateTime())
+            binding.currentTemp.text = binding.currentTemp.context.getString(R.string.temp, data.temp.day)
+            binding.high.text = binding.high.context.getString(R.string.high_colon, data.temp.max)
+            binding.low.text = binding.low.context.getString(R.string.low_colon, data.temp.min)
+            binding.sunrise.text = binding.sunrise.context.getString(
                 R.string.sunrise,
                 timeFormat.format(data.sunrise.getDateTime()).lowercase()
             )
-            sunsetTimeView.text = sunsetTimeView.context.getString(
+            binding.sunset.text = binding.sunset.context.getString(
                 R.string.sunset,
                 timeFormat.format(data.sunset.getDateTime()).lowercase()
             )
@@ -52,10 +47,9 @@ class ForecastAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.forecast_data, parent, false)
+        val binding = ForecastDataBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
-        return ViewHolder(view)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
