@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.ics342.weather.R
 import com.ics342.weather.databinding.ActivityMainBinding
 import com.ics342.weather.domains.CurrentConditions
+import com.ics342.weather.fragments.CurrentConditionsFragment
 import com.ics342.weather.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
