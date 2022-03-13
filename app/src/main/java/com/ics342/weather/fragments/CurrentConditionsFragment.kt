@@ -3,6 +3,7 @@ package com.ics342.weather.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.ics342.weather.R
 import com.ics342.weather.databinding.CurrentConditionsFragmentBinding
@@ -19,18 +20,11 @@ class CurrentConditionsFragment : Fragment(R.layout.current_conditions_fragment)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding = CurrentConditionsFragmentBinding.bind(view)
 
-//        binding.forecastButton.setOnClickListener {
-//            // todo: start the next fragment transaction here
-//
-////            startActivity(Intent(this, ForecastActivity::class.java))
-////            supportFragmentManager.beginTransaction().apply {
-////                replace(R.id.flFragment, currentConditionsFragment)
-////                commit()
-////            }
-//        }
+        binding.forecastButton.setOnClickListener {
+            findNavController().navigate(R.id.action_currentConditionsFragment_to_forecastFragment)
+        }
     }
 
     override fun onResume() {
