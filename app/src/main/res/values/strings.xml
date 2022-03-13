@@ -13,6 +13,6 @@
     <string name="high_colon">High: %.0f°</string>
     <string name="sunset">Sunset: %1$s</string>
     <string name="sunrise">Sunrise: %1$s</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="zip_code">Zip Code</string>
+    <string name="submit">submit</string>
 </resources>

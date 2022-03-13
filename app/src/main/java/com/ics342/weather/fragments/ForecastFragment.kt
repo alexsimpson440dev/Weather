@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class ForecastFragment : Fragment(R.layout.activity_forecast) {
+class ForecastFragment : Fragment(R.layout.fragment_forecast) {
 
     private lateinit var recyclerView: RecyclerView
     @Inject lateinit var viewModel: ForecastViewModel

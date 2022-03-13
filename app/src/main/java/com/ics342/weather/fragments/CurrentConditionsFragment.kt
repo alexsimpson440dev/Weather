@@ -6,21 +6,21 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.ics342.weather.R
-import com.ics342.weather.databinding.CurrentConditionsFragmentBinding
+import com.ics342.weather.databinding.FragmentCurrentConditionsBinding
 import com.ics342.weather.domains.CurrentConditions
 import com.ics342.weather.viewmodels.CurrentConditionsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class CurrentConditionsFragment : Fragment(R.layout.current_conditions_fragment) {
+class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions) {
 
-    private lateinit var binding: CurrentConditionsFragmentBinding
+    private lateinit var binding: FragmentCurrentConditionsBinding
     @Inject lateinit var viewModel: CurrentConditionsViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = CurrentConditionsFragmentBinding.bind(view)
+        binding = FragmentCurrentConditionsBinding.bind(view)
 
         binding.forecastButton.setOnClickListener {
             findNavController().navigate(R.id.action_currentConditionsFragment_to_forecastFragment)
