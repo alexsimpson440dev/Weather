@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-class ForecastViewModel @Inject constructor(private val service: Api): ViewModel() {
+class ForecastViewModel @Inject constructor(private val service: Api) : ViewModel() {
 
     private val _forecast = MutableLiveData<Forecast>()
     val forecast: LiveData<Forecast>

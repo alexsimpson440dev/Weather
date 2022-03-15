@@ -18,7 +18,8 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions)
 
     private val args: CurrentConditionsFragmentArgs by navArgs()
     private lateinit var binding: FragmentCurrentConditionsBinding
-    @Inject lateinit var viewModel: CurrentConditionsViewModel
+    @Inject
+    lateinit var viewModel: CurrentConditionsViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,7 +52,10 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions)
     }
 
     private fun navigateToForecast() {
-        val action = CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(args.zipCode)
+        val action =
+            CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(
+                args.zipCode
+            )
 
         findNavController().navigate(action)
     }

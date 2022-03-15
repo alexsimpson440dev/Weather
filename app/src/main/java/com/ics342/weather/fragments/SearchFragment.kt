@@ -54,7 +54,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun navigateToCurrentConditions(currentConditions: CurrentConditions) {
         val zipCode = viewModel.getZipCode()
-        val action = SearchFragmentDirections.actionSearchFragmentToCurrentConditionsFragment(zipCode, currentConditions)
+        val action = SearchFragmentDirections.actionSearchFragmentToCurrentConditionsFragment(
+            zipCode,
+            currentConditions
+        )
 
         findNavController().navigate(action)
     }
