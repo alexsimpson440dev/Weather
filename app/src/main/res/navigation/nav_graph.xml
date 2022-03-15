@@ -20,6 +20,10 @@
         android:label="ForecastFragment" />
 
     <action
+        android:id="@+id/action_searchFragment_to_currentConditionsFragment"
+        app:destination="@+id/currentConditionsFragment" />
+
+    <action
         android:id="@+id/action_currentConditionsFragment_to_forecastFragment"
         app:destination="@+id/forecastFragment" />
 

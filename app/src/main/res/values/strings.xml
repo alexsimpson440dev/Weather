@@ -15,4 +15,5 @@
     <string name="sunrise">Sunrise: %1$s</string>
     <string name="zip_code">Zip Code</string>
     <string name="submit">submit</string>
+    <string name="ok">ok</string>
 </resources>

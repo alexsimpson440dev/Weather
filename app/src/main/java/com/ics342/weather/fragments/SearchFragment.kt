@@ -1,6 +1,7 @@
 package com.ics342.weather.fragments
 
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -25,6 +26,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             binding.submitButton.isEnabled = enable
         }
 
+        viewModel.showErrorDialog.observe(this) { showError ->
+            if (showError) {
+                ErrorDialogFragment().show(childFragmentManager, ErrorDialogFragment.TAG)
+            }
+        }
+
         binding.zipCode.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
@@ -34,13 +41,14 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 p0?.toString()?.let { viewModel.updateZipCode(it) }
             }
 
-            override fun afterTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                // watch video at 01:32:26
+            override fun afterTextChanged(p0: Editable?) {
+                5
             }
         })
 
         binding.submitButton.setOnClickListener {
-            findNavController().navigate(R.id.action_currentConditionsFragment_to_forecastFragment)
+            viewModel.submitButtonClicked()
+            findNavController().navigate(R.id.action_searchFragment_to_currentConditionsFragment)
         }
     }
 }
