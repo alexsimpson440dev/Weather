@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.ics342.weather.R
 import com.ics342.weather.databinding.FragmentSearchBinding
+import com.ics342.weather.domains.CurrentConditions
 import com.ics342.weather.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -22,33 +23,39 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
 
-        viewModel.enableButton.observe(this) { enable ->
+        viewModel.enableButton.observe(viewLifecycleOwner) { enable ->
             binding.submitButton.isEnabled = enable
         }
 
-        viewModel.showErrorDialog.observe(this) { showError ->
+        viewModel.showErrorDialog.observe(viewLifecycleOwner) { showError ->
             if (showError) {
                 ErrorDialogFragment().show(childFragmentManager, ErrorDialogFragment.TAG)
             }
         }
 
         binding.zipCode.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 p0?.toString()?.let { viewModel.updateZipCode(it) }
             }
 
-            override fun afterTextChanged(p0: Editable?) {
-                5
-            }
+            override fun afterTextChanged(p0: Editable?) {}
         })
 
         binding.submitButton.setOnClickListener {
             viewModel.submitButtonClicked()
-            findNavController().navigate(R.id.action_searchFragment_to_currentConditionsFragment)
+            viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
+                navigateToCurrentConditions(currentConditions)
+            }
         }
+    }
+
+    private fun navigateToCurrentConditions(currentConditions: CurrentConditions) {
+        val zipCode = viewModel.getZipCode()
+        val action = SearchFragmentDirections.actionSearchFragmentToCurrentConditionsFragment(zipCode, currentConditions)
+
+        findNavController().navigate(action)
     }
 }

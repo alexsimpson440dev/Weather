@@ -12,12 +12,23 @@
     <fragment
         android:id="@+id/currentConditionsFragment"
         android:name="com.ics342.weather.fragments.CurrentConditionsFragment"
-        android:label="CurrentConditionsFragment" />
+        android:label="CurrentConditionsFragment">
+        <argument
+            android:name="zipCode"
+            app:argType="string" />
+        <argument
+            android:name="currentConditions"
+            app:argType="com.ics342.weather.domains.CurrentConditions"/>
+    </fragment>
 
     <fragment
         android:id="@+id/forecastFragment"
         android:name="com.ics342.weather.fragments.ForecastFragment"
-        android:label="ForecastFragment" />
+        android:label="ForecastFragment">
+        <argument
+            android:name="zipCode"
+            app:argType="string" />
+    </fragment>
 
     <action
         android:id="@+id/action_searchFragment_to_currentConditionsFragment"

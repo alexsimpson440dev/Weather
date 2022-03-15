@@ -3,6 +3,7 @@ package com.ics342.weather.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.ics342.weather.R
@@ -16,6 +17,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ForecastFragment : Fragment(R.layout.fragment_forecast) {
 
+    private val args: ForecastFragmentArgs by navArgs()
     private lateinit var recyclerView: RecyclerView
     @Inject lateinit var viewModel: ForecastViewModel
     private var adapterData = mutableListOf<DayForecast>()
@@ -35,7 +37,7 @@ class ForecastFragment : Fragment(R.layout.fragment_forecast) {
         viewModel.forecast.observe(this) { forecast ->
             bindData(forecast)
         }
-        viewModel.loadData()
+        viewModel.loadData(args.zipCode)
     }
 
     private fun bindData(forecast: Forecast) {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.ics342.weather.R
 import com.ics342.weather.databinding.FragmentCurrentConditionsBinding
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions) {
 
+    private val args: CurrentConditionsFragmentArgs by navArgs()
     private lateinit var binding: FragmentCurrentConditionsBinding
     @Inject lateinit var viewModel: CurrentConditionsViewModel
 
@@ -23,16 +25,13 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions)
         binding = FragmentCurrentConditionsBinding.bind(view)
 
         binding.forecastButton.setOnClickListener {
-            findNavController().navigate(R.id.action_currentConditionsFragment_to_forecastFragment)
+            navigateToForecast()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.currentConditions.observe(this) { currentConditions ->
-            bindData(currentConditions)
-        }
-        viewModel.loadData()
+        bindData(args.currentConditions)
     }
 
     private fun bindData(currentConditions: CurrentConditions) {
@@ -49,5 +48,11 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions)
         Glide.with(this)
             .load(iconUrl)
             .into(binding.conditionIcon)
+    }
+
+    private fun navigateToForecast() {
+        val action = CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(args.zipCode)
+
+        findNavController().navigate(action)
     }
 }

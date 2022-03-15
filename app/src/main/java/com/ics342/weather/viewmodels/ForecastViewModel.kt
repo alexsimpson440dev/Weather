@@ -15,7 +15,7 @@ class ForecastViewModel @Inject constructor(private val service: Api): ViewModel
     val forecast: LiveData<Forecast>
         get() = _forecast
 
-    fun loadData() = runBlocking {
-        launch { _forecast.value = service.getForecast("55304") }
+    fun loadData(zipCode: String) = runBlocking {
+        launch { _forecast.value = service.getForecast(zipCode) }
     }
 }
