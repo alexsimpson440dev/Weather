@@ -16,4 +16,5 @@
     <string name="zip_code">Zip Code</string>
     <string name="submit">submit</string>
     <string name="ok">ok</string>
+    <string name="get_location">Current Location</string>
 </resources>
