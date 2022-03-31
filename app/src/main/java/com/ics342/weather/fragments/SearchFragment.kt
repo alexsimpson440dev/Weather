@@ -3,6 +3,7 @@ package com.ics342.weather.fragments
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -95,22 +96,41 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             }
         } else {
             // we do not have permission data, call to get permission
-            requestPermission().launch(ACCESS_COARSE_LOCATION)
+            requestPermission()
         }
     }
 
     private fun checkPermissions() = ActivityCompat.checkSelfPermission(requireContext(), ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    private fun requestPermission(): ActivityResultLauncher<String> {
-        return registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                Log.i("permission", "granted")
-                getCurrentLocation()
-            } else {
-                Log.i("permission: ", "not granted")
+    private fun requestPermission() {
+        AlertDialog.Builder(requireContext())
+            .setMessage("Need to obtain location for local weather")
+            .setNeutralButton("ok") {_, _ ->
+                ActivityCompat.requestPermissions(
+                    requireActivity(),
+                    arrayOf(ACCESS_COARSE_LOCATION),
+                    COARSE_LOCATION_ACCESS_CODE
+                )
             }
+            .create()
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == COARSE_LOCATION_ACCESS_CODE) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation()
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         }
+    }
+
+    companion object {
+        private const val COARSE_LOCATION_ACCESS_CODE = 100
     }
 }
