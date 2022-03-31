@@ -1,22 +1,24 @@
 package com.ics342.weather.fragments
 
+import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.ics342.weather.R
 import com.ics342.weather.databinding.FragmentSearchBinding
 import com.ics342.weather.domains.CurrentConditions
@@ -29,21 +31,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private lateinit var binding: FragmentSearchBinding
     @Inject lateinit var viewModel: SearchViewModel
-    private lateinit var locationProviderClient: FusedLocationProviderClient
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            Log.i("permission", "granted")
-        } else {
-            Log.i("permission: ", "not granted")
-        }
-    }
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
 
         viewModel.enableButton.observe(viewLifecycleOwner) { enable ->
             binding.submitButton.isEnabled = enable
@@ -74,7 +67,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
 
         binding.getLocationButton.setOnClickListener {
-            requestPermission(requireContext(), requireActivity())
+            getCurrentLocation()
         }
     }
 
@@ -88,26 +81,35 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         findNavController().navigate(action)
     }
 
-    private fun requestPermission(context: Context, activity: Activity) {
-        when {
-            ContextCompat.checkSelfPermission(
-                context,
-                ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.i("Permission", "granted")
-                locationProviderClient = LocationServices.getFusedLocationProviderClient(context)
-                locationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+    private fun getCurrentLocation() {
+        // check if we have permission
+        if (checkPermissions()) {
+            // we should check location, but not yet
+            // continue to get location
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location == null) {
+                    Log.i("Location", "null location")
+                } else {
                     Log.i("Location", location.toString())
                 }
             }
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                activity,
-                ACCESS_COARSE_LOCATION
-            ) -> {
-                Log.i("Permission", "permission not accepted yet")
-            }
-            else -> {
-                requestPermissionLauncher.launch(ACCESS_COARSE_LOCATION)
+        } else {
+            // we do not have permission data, call to get permission
+            requestPermission().launch(ACCESS_COARSE_LOCATION)
+        }
+    }
+
+    private fun checkPermissions() = ActivityCompat.checkSelfPermission(requireContext(), ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    private fun requestPermission(): ActivityResultLauncher<String> {
+        return registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                Log.i("permission", "granted")
+                getCurrentLocation()
+            } else {
+                Log.i("permission: ", "not granted")
             }
         }
     }
