@@ -37,14 +37,13 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 5000
+        locationRequest.interval = 100
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 for (location in locationResult.locations) {
-                    // todo: do something here
-                    Log.i("Location", location.toString())
+                    onLocationObtained(location)
                 }
             }
         }
@@ -84,8 +83,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun navigateToCurrentConditions(currentConditions: CurrentConditions) {
         val zipCode = viewModel.getZipCode()
+        val (latitude, longitude) = viewModel.getLocation()
         val action = SearchFragmentDirections.actionSearchFragmentToCurrentConditionsFragment(
             zipCode,
+            latitude,
+            longitude,
             currentConditions
         )
 
@@ -137,8 +139,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 if (location == null) {
                     startLocationUpdates()
                 } else {
-                    // todo: do something here
-                    Log.i("Location", location.toString())
+                    onLocationObtained(location)
                 }
             }
         } else {
@@ -155,8 +156,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.request_location_permission))
             .setNeutralButton(getString(R.string.ok)) { _, _ ->
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
+                requestPermissions(
                     arrayOf(ACCESS_COARSE_LOCATION),
                     COARSE_LOCATION_ACCESS_CODE
                 )
@@ -176,6 +176,14 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun onLocationObtained(location: Location) {
+        viewModel.setLocation(location)
+        viewModel.locationDataObtained()
+        viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
+            navigateToCurrentConditions(currentConditions)
         }
     }
 

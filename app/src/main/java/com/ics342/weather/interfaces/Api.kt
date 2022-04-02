@@ -14,9 +14,26 @@ interface Api {
         @Query("appid") appId: String = "a5be1cee30b6093e05faa76a1d3cb9be"
     ): CurrentConditions
 
+    @GET("weather")
+    suspend fun getCurrentConditions(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
+        @Query("units") units: String = "imperial",
+        @Query("appid") appId: String = "a5be1cee30b6093e05faa76a1d3cb9be"
+    ): CurrentConditions
+
     @GET("forecast/daily")
     suspend fun getForecast(
         @Query("zip") zip: String,
+        @Query("units") units: String = "imperial",
+        @Query("cnt") count: Int = 16,
+        @Query("appid") appId: String = "a5be1cee30b6093e05faa76a1d3cb9be"
+    ): Forecast
+
+    @GET("forecast/daily")
+    suspend fun getForecast(
+        @Query("lat") lat: String,
+        @Query("lon") lon: String,
         @Query("units") units: String = "imperial",
         @Query("cnt") count: Int = 16,
         @Query("appid") appId: String = "a5be1cee30b6093e05faa76a1d3cb9be"

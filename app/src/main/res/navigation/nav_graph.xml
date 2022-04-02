@@ -17,6 +17,12 @@
             android:name="zipCode"
             app:argType="string" />
         <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
+            app:argType="string" />
+        <argument
             android:name="currentConditions"
             app:argType="com.ics342.weather.domains.CurrentConditions"/>
     </fragment>
@@ -27,6 +33,12 @@
         android:label="ForecastFragment">
         <argument
             android:name="zipCode"
+            app:argType="string" />
+        <argument
+            android:name="latitude"
+            app:argType="string" />
+        <argument
+            android:name="longitude"
             app:argType="string" />
     </fragment>
 

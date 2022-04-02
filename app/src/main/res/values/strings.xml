@@ -16,6 +16,7 @@
     <string name="zip_code">Zip Code</string>
     <string name="submit">submit</string>
     <string name="ok">ok</string>
+    <string name="location_error">Error fetching data for location data provided</string>
     <string name="get_location">Use Current Location</string>
     <string name="request_location_permission">Need to obtain location for local weather</string>
 </resources>

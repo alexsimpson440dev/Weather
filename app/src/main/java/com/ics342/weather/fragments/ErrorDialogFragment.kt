@@ -9,7 +9,7 @@ import com.ics342.weather.R
 class ErrorDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
-            .setMessage("Error fetching data for that zip code")
+            .setMessage(getString(R.string.location_error))
             .setPositiveButton(R.string.ok, null)
             .create()
 
