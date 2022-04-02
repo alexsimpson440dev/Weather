@@ -34,18 +34,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        locationCallback = object : LocationCallback() {}
         locationRequest = LocationRequest.create()
-        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        locationRequest.interval = 100
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                for (location in locationResult.locations) {
-                    onLocationObtained(location)
-                }
-            }
-        }
+        locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        locationRequest.interval = 0
 
         viewModel.enableButton.observe(viewLifecycleOwner) { enable ->
             binding.submitButton.isEnabled = enable
@@ -80,16 +72,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        startLocationUpdates()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
     private fun navigateToCurrentConditions(currentConditions: CurrentConditions) {
         val zipCode = viewModel.getZipCode()
         val (latitude, longitude) = viewModel.getLocation()
@@ -118,7 +100,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             }
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location == null) {
-                    startLocationUpdates()
+                    updateLocation()
                 } else {
                     onLocationObtained(location)
                 }
@@ -128,7 +110,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
-    private fun startLocationUpdates() {
+    private fun updateLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -144,6 +126,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             locationCallback,
             Looper.getMainLooper()
         )
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        getCurrentLocation()
     }
 
     private fun checkPermissions() = ActivityCompat.checkSelfPermission(
