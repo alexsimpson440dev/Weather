@@ -1,38 +1,38 @@
-package com.ics342.weather.activities
+package com.ics342.weather.fragments
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.ics342.weather.R
-import com.ics342.weather.databinding.ActivityMainBinding
+import com.ics342.weather.databinding.FragmentCurrentConditionsBinding
 import com.ics342.weather.domains.CurrentConditions
-import com.ics342.weather.viewmodels.MainViewModel
+import com.ics342.weather.viewmodels.CurrentConditionsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions) {
 
-    private lateinit var binding: ActivityMainBinding
-    @Inject lateinit var viewModel: MainViewModel
+    private val args: CurrentConditionsFragmentArgs by navArgs()
+    private lateinit var binding: FragmentCurrentConditionsBinding
+    @Inject
+    lateinit var viewModel: CurrentConditionsViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentCurrentConditionsBinding.bind(view)
 
         binding.forecastButton.setOnClickListener {
-            startActivity(Intent(this, ForecastActivity::class.java))
+            navigateToForecast()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.currentConditions.observe(this) { currentConditions ->
-            bindData(currentConditions)
-        }
-        viewModel.loadData()
+        bindData(args.currentConditions)
     }
 
     private fun bindData(currentConditions: CurrentConditions) {
@@ -49,5 +49,14 @@ class MainActivity : AppCompatActivity() {
         Glide.with(this)
             .load(iconUrl)
             .into(binding.conditionIcon)
+    }
+
+    private fun navigateToForecast() {
+        val action =
+            CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(
+                args.zipCode
+            )
+
+        findNavController().navigate(action)
     }
 }
