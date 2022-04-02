@@ -43,6 +43,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
                 for (location in locationResult.locations) {
+                    // todo: do something here
                     Log.i("Location", location.toString())
                 }
             }
@@ -120,10 +121,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     }
 
     private fun getCurrentLocation() {
-        // check if we have permission
         if (checkPermissions()) {
-            // we should check location, but not yet
-            // continue to get location
             if (ActivityCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -137,24 +135,26 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             }
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location == null) {
-                    Log.i("Location", "null location")
                     startLocationUpdates()
                 } else {
+                    // todo: do something here
                     Log.i("Location", location.toString())
                 }
             }
         } else {
-            // we do not have permission data, call to get permission
             requestPermission()
         }
     }
 
-    private fun checkPermissions() = ActivityCompat.checkSelfPermission(requireContext(), ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    private fun checkPermissions() = ActivityCompat.checkSelfPermission(
+        requireContext(),
+        ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
 
     private fun requestPermission() {
         AlertDialog.Builder(requireContext())
-            .setMessage("Need to obtain location for local weather")
-            .setNeutralButton("ok") {_, _ ->
+            .setMessage(getString(R.string.request_location_permission))
+            .setNeutralButton(getString(R.string.ok)) { _, _ ->
                 ActivityCompat.requestPermissions(
                     requireActivity(),
                     arrayOf(ACCESS_COARSE_LOCATION),
