@@ -37,7 +37,7 @@ class ForecastFragment : Fragment(R.layout.fragment_forecast) {
         viewModel.forecast.observe(this) { forecast ->
             bindData(forecast)
         }
-        viewModel.loadData(args.zipCode)
+        viewModel.loadData(args.zipCode, args.latitude, args.longitude)
     }
 
     private fun bindData(forecast: Forecast) {
