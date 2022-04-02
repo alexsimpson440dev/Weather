@@ -81,6 +81,16 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        startLocationUpdates()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
     private fun navigateToCurrentConditions(currentConditions: CurrentConditions) {
         val zipCode = viewModel.getZipCode()
         val (latitude, longitude) = viewModel.getLocation()
@@ -92,34 +102,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         )
 
         findNavController().navigate(action)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startLocationUpdates()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
-    private fun startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
     }
 
     private fun getCurrentLocation() {
@@ -145,6 +127,24 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         } else {
             requestPermission()
         }
+    }
+
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
     }
 
     private fun checkPermissions() = ActivityCompat.checkSelfPermission(
