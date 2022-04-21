@@ -74,8 +74,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
 
         binding.notificationButton.setOnClickListener {
-            Intent(requireContext(), WeatherService::class.java).also { intent ->
-                requireActivity().startForegroundService(intent)
+            if (checkPermissions()) {
+                Intent(requireContext(), WeatherService::class.java).also { intent ->
+                    requireActivity().startService(intent)
+                }
+            } else {
+                requestPermission()
             }
         }
     }

@@ -1,19 +1,37 @@
 package com.ics342.weather.services
 
+import android.Manifest
 import android.app.*
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Build
 import android.os.IBinder
+import android.os.Looper
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
 import com.ics342.weather.R
 import com.ics342.weather.fragments.SearchFragment
 
 class WeatherService : Service() {
 
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
+
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+
+        locationCallback = object : LocationCallback() {}
+        locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        locationRequest.interval = 0 // todo: set to 30 minutes
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -49,6 +67,61 @@ class WeatherService : Service() {
 
             manager.createNotificationChannel(weatherNotificationChannel)
         }
+    }
+
+    private fun getCurrentLocation() {
+        if (checkPermissions()) {
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Toast.makeText(this, "Failed to get location permissions", Toast.LENGTH_SHORT).show()
+                return
+            }
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location == null) {
+                    updateLocation()
+                } else {
+                    onLocationObtained(location)
+                }
+            }
+        } else {
+            Toast.makeText(this, "Location permissions not granted", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        getCurrentLocation()
+    }
+
+    private fun checkPermissions() = ActivityCompat.checkSelfPermission(
+        this,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
+
+
+    private fun onLocationObtained(location: Location) {
+        // todo: set data here for the notification
     }
 
     companion object {
