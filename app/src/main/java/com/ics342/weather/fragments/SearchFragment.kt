@@ -41,10 +41,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         locationRequest.interval = 0
 
-        Intent(requireContext(), WeatherService::class.java).also { intent ->
-            requireActivity().startForegroundService(intent)
-        }
-
         viewModel.enableButton.observe(viewLifecycleOwner) { enable ->
             binding.submitButton.isEnabled = enable
         }
@@ -78,7 +74,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
 
         binding.notificationButton.setOnClickListener {
-
+            Intent(requireContext(), WeatherService::class.java).also { intent ->
+                requireActivity().startForegroundService(intent)
+            }
         }
     }
 

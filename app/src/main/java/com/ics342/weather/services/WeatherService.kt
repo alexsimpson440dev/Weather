@@ -43,15 +43,16 @@ class WeatherService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(CHANNEL_ID, "Weather Notification Channel", NotificationManager.IMPORTANCE_DEFAULT)
+            val weatherNotificationChannel = NotificationChannel(CHANNEL_ID, "Weather Channel", NotificationManager.IMPORTANCE_DEFAULT)
+            weatherNotificationChannel.setSound(null, null)
             val manager = getSystemService(NotificationManager::class.java)
 
-            manager.createNotificationChannel(serviceChannel)
+            manager.createNotificationChannel(weatherNotificationChannel)
         }
     }
 
     companion object {
-        const val NOTIFICATION_ID = 124
-        const val CHANNEL_ID = "weather_service_channel"
+        const val NOTIFICATION_ID = 125
+        const val CHANNEL_ID = "weather_notification_channel"
     }
 }
