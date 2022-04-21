@@ -3,6 +3,7 @@ package com.ics342.weather.fragments
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -17,6 +18,7 @@ import com.google.android.gms.location.*
 import com.ics342.weather.R
 import com.ics342.weather.databinding.FragmentSearchBinding
 import com.ics342.weather.domains.CurrentConditions
+import com.ics342.weather.services.WeatherService
 import com.ics342.weather.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -38,6 +40,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         locationRequest.interval = 0
+
+        Intent(requireContext(), WeatherService::class.java).also { intent ->
+            requireActivity().startForegroundService(intent)
+        }
 
         viewModel.enableButton.observe(viewLifecycleOwner) { enable ->
             binding.submitButton.isEnabled = enable
@@ -69,6 +75,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         binding.getLocationButton.setOnClickListener {
             getCurrentLocation()
+        }
+
+        binding.notificationButton.setOnClickListener {
+
         }
     }
 
