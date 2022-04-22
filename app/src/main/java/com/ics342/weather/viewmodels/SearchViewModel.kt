@@ -19,13 +19,18 @@ class SearchViewModel @Inject constructor(private val service: Api) : ViewModel(
 
     private val _enableButton = MutableLiveData(false)
     private val _showErrorDialog = MutableLiveData(false)
+    private val _enableNotifications = MutableLiveData(false)
+
     private var _currentConditions = MutableLiveData<CurrentConditions>()
+
+    val enableButton: LiveData<Boolean>
+        get() = _enableButton
 
     val showErrorDialog: LiveData<Boolean>
         get() = _showErrorDialog
 
-    val enableButton: LiveData<Boolean>
-        get() = _enableButton
+    val enableNotifications: LiveData<Boolean>
+        get() = _enableNotifications
 
     val currentConditions: LiveData<CurrentConditions>
         get() = _currentConditions
@@ -66,6 +71,10 @@ class SearchViewModel @Inject constructor(private val service: Api) : ViewModel(
                 _showErrorDialog.value = true
             }
         }
+    }
+
+    fun notificationsButtonClicked() = runBlocking {
+        _enableNotifications.value = _enableNotifications.value != true
     }
 
     fun locationDataObtained() = runBlocking {

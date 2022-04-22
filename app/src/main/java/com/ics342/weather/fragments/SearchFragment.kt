@@ -27,7 +27,8 @@ import javax.inject.Inject
 class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private lateinit var binding: FragmentSearchBinding
-    @Inject lateinit var viewModel: SearchViewModel
+    @Inject
+    lateinit var viewModel: SearchViewModel
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -35,7 +36,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireContext())
         locationCallback = object : LocationCallback() {}
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
@@ -74,12 +76,22 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
 
         binding.notificationButton.setOnClickListener {
-            if (checkPermissions()) {
-                Intent(requireContext(), WeatherService::class.java).also { intent ->
-                    requireActivity().startService(intent)
+            viewModel.notificationsButtonClicked()
+
+            if (viewModel.enableNotifications.value == true) {
+                binding.notificationButton.text = getString(R.string.turn_off_notifications)
+                if (checkPermissions()) {
+                    Intent(requireContext(), WeatherService::class.java).also { intent ->
+                        requireActivity().startService(intent)
+                    }
+                } else {
+                    requestPermission()
                 }
             } else {
-                requestPermission()
+                binding.notificationButton.text = getString(R.string.turn_on_notifications)
+                Intent(requireContext(), WeatherService::class.java).also { intent ->
+                    requireActivity().stopService(intent)
+                }
             }
         }
     }
@@ -165,6 +177,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        if (viewModel.enableNotifications.value == true) {
+            Intent(requireContext(), WeatherService::class.java).also { intent ->
+                requireActivity().startService(intent)
+            }
+        }
+
         if (requestCode == COARSE_LOCATION_ACCESS_CODE) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation()
