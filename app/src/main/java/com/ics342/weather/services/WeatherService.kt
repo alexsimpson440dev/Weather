@@ -12,11 +12,10 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import com.ics342.weather.R
 import com.ics342.weather.fragments.SearchFragment
 
@@ -30,6 +29,8 @@ class WeatherService : Service() {
         super.onCreate()
         createNotificationChannel()
 
+//        fusedLocationProviderClient =
+//            LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {}
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
@@ -45,9 +46,7 @@ class WeatherService : Service() {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
 
         val pendingIntent: PendingIntent =
-            Intent(this, SearchFragment::class.java).let { notificationIntent ->
-                PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
-            }
+            getActivity(this, 0, Intent(this, SearchFragment::class.java), PendingIntent.FLAG_IMMUTABLE)
 
         val notification: Notification = Notification.Builder(this, CHANNEL_ID)
             .setContentTitle("f") // this should be weather stuff
@@ -57,7 +56,10 @@ class WeatherService : Service() {
             .setTicker("fff")
             .build()
 
+        getCurrentLocation()
+
         startForeground(NOTIFICATION_ID, notification)
+
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -112,8 +114,6 @@ class WeatherService : Service() {
             locationCallback,
             Looper.getMainLooper()
         )
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        getCurrentLocation()
     }
 
     private fun checkPermissions() = ActivityCompat.checkSelfPermission(

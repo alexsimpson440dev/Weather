@@ -36,6 +36,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
+
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
         locationCallback = object : LocationCallback() {}
@@ -77,22 +78,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         binding.notificationButton.setOnClickListener {
             viewModel.notificationsButtonClicked()
-
-            if (viewModel.enableNotifications.value == true) {
-                binding.notificationButton.text = getString(R.string.turn_off_notifications)
-                if (checkPermissions()) {
-                    Intent(requireContext(), WeatherService::class.java).also { intent ->
-                        requireActivity().startService(intent)
-                    }
-                } else {
-                    requestPermission()
-                }
-            } else {
-                binding.notificationButton.text = getString(R.string.turn_on_notifications)
-                Intent(requireContext(), WeatherService::class.java).also { intent ->
-                    requireActivity().stopService(intent)
-                }
-            }
+            handleNotificationButton()
         }
     }
 
@@ -177,11 +163,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (viewModel.enableNotifications.value == true) {
-            Intent(requireContext(), WeatherService::class.java).also { intent ->
-                requireActivity().startService(intent)
-            }
-        }
+//        if (viewModel.enableNotifications.value == true) {
+//            Intent(requireContext(), WeatherService::class.java).also { intent ->
+//                requireActivity().startService(intent)
+//            }
+//        }
 
         if (requestCode == COARSE_LOCATION_ACCESS_CODE) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -197,6 +183,24 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         viewModel.locationDataObtained()
         viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
             navigateToCurrentConditions(currentConditions)
+        }
+    }
+
+    private fun handleNotificationButton() {
+        if (viewModel.enableNotifications.value == true) {
+            binding.notificationButton.text = getString(R.string.turn_off_notifications)
+            if (checkPermissions()) {
+                Intent(requireContext(), WeatherService::class.java).also { intent ->
+                    requireActivity().startService(intent)
+                }
+            } else {
+                requestPermission()
+            }
+        } else {
+            binding.notificationButton.text = getString(R.string.turn_on_notifications)
+            Intent(requireContext(), WeatherService::class.java).also { intent ->
+                requireActivity().stopService(intent)
+            }
         }
     }
 
