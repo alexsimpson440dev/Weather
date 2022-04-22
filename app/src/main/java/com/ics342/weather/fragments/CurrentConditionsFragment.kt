@@ -54,7 +54,9 @@ class CurrentConditionsFragment : Fragment(R.layout.fragment_current_conditions)
     private fun navigateToForecast() {
         val action =
             CurrentConditionsFragmentDirections.actionCurrentConditionsFragmentToForecastFragment(
-                args.zipCode
+                args.zipCode,
+                args.latitude,
+                args.longitude
             )
 
         findNavController().navigate(action)

@@ -1,5 +1,6 @@
 package com.ics342.weather.viewmodels
 
+import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(private val service: Api) : ViewModel() {
 
     private var zipCode: String = ""
+    private var latitude: String = ""
+    private var longitude: String = ""
 
     private val _enableButton = MutableLiveData(false)
     private val _showErrorDialog = MutableLiveData(false)
@@ -27,15 +30,20 @@ class SearchViewModel @Inject constructor(private val service: Api) : ViewModel(
     val currentConditions: LiveData<CurrentConditions>
         get() = _currentConditions
 
-    fun getZipCode(): String {
-        return zipCode
-    }
+    fun getZipCode() = zipCode
+
+    fun getLocation(): Pair<String, String> = Pair(latitude, longitude)
 
     fun updateZipCode(zipCode: String) {
         if (zipCode != this.zipCode) {
             _enableButton.value = isValidZipCode(zipCode)
             this.zipCode = zipCode
         }
+    }
+
+    fun setLocation(location: Location) {
+        latitude = location.latitude.toString()
+        longitude = location.longitude.toString()
     }
 
     private fun isValidZipCode(zipCode: String): Boolean {
@@ -53,7 +61,17 @@ class SearchViewModel @Inject constructor(private val service: Api) : ViewModel(
 
         launch {
             try {
-                _currentConditions.value = service.getCurrentConditions(zipCode)
+                _currentConditions.value = service.getCurrentConditions(zip = zipCode)
+            } catch (ex: Exception) {
+                _showErrorDialog.value = true
+            }
+        }
+    }
+
+    fun locationDataObtained() = runBlocking {
+        launch {
+            try {
+                _currentConditions.value = service.getCurrentConditions(lat = latitude, lon = longitude)
             } catch (ex: Exception) {
                 _showErrorDialog.value = true
             }

@@ -15,7 +15,11 @@ class ForecastViewModel @Inject constructor(private val service: Api) : ViewMode
     val forecast: LiveData<Forecast>
         get() = _forecast
 
-    fun loadData(zipCode: String) = runBlocking {
-        launch { _forecast.value = service.getForecast(zipCode) }
+    fun loadData(zipCode: String, latitude: String, longitude: String) = runBlocking {
+        if (zipCode.isNotEmpty()) {
+            launch { _forecast.value = service.getForecast(zip = zipCode) }
+        } else {
+            launch { _forecast.value = service.getForecast(lat = latitude, lon = longitude) }
+        }
     }
 }
