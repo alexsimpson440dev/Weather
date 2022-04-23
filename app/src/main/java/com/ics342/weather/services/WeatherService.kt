@@ -29,8 +29,8 @@ class WeatherService : Service() {
         super.onCreate()
         createNotificationChannel()
 
-//        fusedLocationProviderClient =
-//            LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(this)
         locationCallback = object : LocationCallback() {}
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY

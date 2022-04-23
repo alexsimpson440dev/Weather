@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -43,6 +44,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         locationRequest.interval = 0
+
+        setNotificationButtonText()
 
         viewModel.enableButton.observe(viewLifecycleOwner) { enable ->
             binding.submitButton.isEnabled = enable
@@ -163,11 +166,13 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-//        if (viewModel.enableNotifications.value == true) {
-//            Intent(requireContext(), WeatherService::class.java).also { intent ->
-//                requireActivity().startService(intent)
-//            }
-//        }
+        if (viewModel.enableNotifications.value == true) {
+            Intent(requireContext(), WeatherService::class.java).also { intent ->
+                requireActivity().startService(intent)
+            }
+
+            return
+        }
 
         if (requestCode == COARSE_LOCATION_ACCESS_CODE) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -188,7 +193,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun handleNotificationButton() {
         if (viewModel.enableNotifications.value == true) {
-            binding.notificationButton.text = getString(R.string.turn_off_notifications)
+            setNotificationButtonText()
             if (checkPermissions()) {
                 Intent(requireContext(), WeatherService::class.java).also { intent ->
                     requireActivity().startService(intent)
@@ -202,6 +207,16 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 requireActivity().stopService(intent)
             }
         }
+    }
+
+    private fun setNotificationButtonText() {
+        val notificationStringId: Int = if (viewModel.enableNotifications.value == true) {
+            R.string.turn_off_notifications
+        } else {
+            R.string.turn_on_notifications
+        }
+
+        binding.notificationButton.text = getString(notificationStringId)
     }
 
     companion object {
