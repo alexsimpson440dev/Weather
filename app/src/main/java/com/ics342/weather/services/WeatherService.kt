@@ -3,6 +3,7 @@ package com.ics342.weather.services
 import android.Manifest
 import android.app.*
 import android.app.PendingIntent.getActivity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -18,7 +19,9 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.ics342.weather.R
 import com.ics342.weather.fragments.SearchFragment
+import okhttp3.internal.notify
 
+@RequiresApi(Build.VERSION_CODES.O)
 class WeatherService : Service() {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -41,26 +44,28 @@ class WeatherService : Service() {
         return null
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
 
-        val pendingIntent: PendingIntent =
-            getActivity(this, 0, Intent(this, SearchFragment::class.java), PendingIntent.FLAG_IMMUTABLE)
-
-        val notification: Notification = Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("f") // this should be weather stuff
-            .setContentText("ff")
-            .setSmallIcon(R.drawable.sun_small)
-            .setContentIntent(pendingIntent)
-            .setTicker("fff")
-            .build()
+        val notification: Notification = getNotification("temp")
 
         getCurrentLocation()
 
         startForeground(NOTIFICATION_ID, notification)
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun getNotification(temperature: String): Notification {
+        val pendingIntent: PendingIntent =
+            getActivity(this, 0, Intent(this, SearchFragment::class.java), PendingIntent.FLAG_IMMUTABLE)
+
+        return Notification.Builder(this, CHANNEL_ID)
+            .setContentTitle("Some Title") // this should be weather stuff
+            .setContentText(temperature)
+            .setSmallIcon(R.drawable.sun_small)
+            .setContentIntent(pendingIntent)
+            .build()
     }
 
     private fun createNotificationChannel() {
@@ -123,7 +128,9 @@ class WeatherService : Service() {
 
 
     private fun onLocationObtained(location: Location) {
-        // todo: set data here for the notification
+        val notification = getNotification(location.toString())
+
+        startForeground(NOTIFICATION_ID, notification)
     }
 
     companion object {
