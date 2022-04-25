@@ -147,7 +147,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             locationCallback,
             Looper.getMainLooper()
         )
-        //fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         getCurrentLocation()
     }
 

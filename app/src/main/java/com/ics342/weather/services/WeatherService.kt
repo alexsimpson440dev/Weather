@@ -22,7 +22,7 @@ class WeatherService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.starting_service), Toast.LENGTH_SHORT).show()
         val temperature = intent?.getStringExtra("temperature")
         val notification: Notification = getNotification(temperature.orEmpty())
 
@@ -31,7 +31,7 @@ class WeatherService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun getNotification(temperature: String = "--"): Notification {
+    private fun getNotification(temperature: String = getString(R.string.double_dash)): Notification {
         val pendingIntent: PendingIntent =
             getActivity(
                 this,
@@ -41,7 +41,7 @@ class WeatherService : Service() {
             )
 
         return Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("Current Temperature")
+            .setContentTitle(getString(R.string.current_temperature))
             .setContentText(temperature + getString(R.string.degree_symbol))
             .setSmallIcon(R.drawable.sun_small)
             .setContentIntent(pendingIntent)
