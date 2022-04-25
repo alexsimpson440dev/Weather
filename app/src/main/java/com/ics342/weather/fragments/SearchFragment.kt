@@ -6,12 +6,14 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -23,8 +25,10 @@ import com.ics342.weather.services.WeatherService
 import com.ics342.weather.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
+@RequiresApi(Build.VERSION_CODES.O)
 class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private lateinit var binding: FragmentSearchBinding
@@ -43,7 +47,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         locationCallback = object : LocationCallback() {}
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        locationRequest.interval = 0
+        locationRequest.interval = 1800000 // this should be 30 minutes
 
         setNotificationButtonText()
 
@@ -77,6 +81,10 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         binding.getLocationButton.setOnClickListener {
             getCurrentLocation()
+
+            viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
+                navigateToCurrentConditions(currentConditions)
+            }
         }
 
         binding.notificationButton.setOnClickListener {
@@ -139,7 +147,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             locationCallback,
             Looper.getMainLooper()
         )
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        //fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         getCurrentLocation()
     }
 
@@ -167,10 +175,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         grantResults: IntArray
     ) {
         if (viewModel.enableNotifications.value == true) {
-            Intent(requireContext(), WeatherService::class.java).also { intent ->
-                requireActivity().startService(intent)
-            }
-
+            handleNotificationButton()
             return
         }
 
@@ -186,17 +191,18 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private fun onLocationObtained(location: Location) {
         viewModel.setLocation(location)
         viewModel.locationDataObtained()
-        viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
-            navigateToCurrentConditions(currentConditions)
-        }
     }
 
     private fun handleNotificationButton() {
         if (viewModel.enableNotifications.value == true) {
+            getCurrentLocation()
             setNotificationButtonText()
             if (checkPermissions()) {
-                Intent(requireContext(), WeatherService::class.java).also { intent ->
-                    requireActivity().startService(intent)
+                viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
+                    Intent(requireContext(), WeatherService::class.java).also { intent ->
+                        intent.putExtra("temperature", currentConditions.main.temp.roundToInt().toString())
+                        requireActivity().startService(intent)
+                    }
                 }
             } else {
                 requestPermission()
