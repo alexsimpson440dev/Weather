@@ -22,7 +22,6 @@
     <string name="request_location_permission">Need to obtain location for local weather</string>
     <string name="turn_on_notifications">Turn On Notifications</string>
     <string name="turn_off_notifications">Turn Off Notifications</string>
-    <string name="current_temperature">Current Temperature</string>
     <string name="starting_service">Starting Service</string>
     <string name="double_dash">--</string>
 </resources>

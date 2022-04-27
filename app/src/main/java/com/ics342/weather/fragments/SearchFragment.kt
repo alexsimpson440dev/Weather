@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -32,6 +31,7 @@ import kotlin.math.roundToInt
 class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private lateinit var binding: FragmentSearchBinding
+
     @Inject
     lateinit var viewModel: SearchViewModel
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -44,7 +44,15 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
-        locationCallback = object : LocationCallback() {}
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                if (viewModel.enableNotifications.value == true) {
+                    viewModel.setLocation(locationResult.lastLocation)
+                    viewModel.locationDataObtained()
+                    handleNotificationButton()
+                }
+            }
+        }
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         locationRequest.interval = 1800000 // this should be 30 minutes
@@ -199,7 +207,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             if (checkPermissions()) {
                 viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
                     Intent(requireContext(), WeatherService::class.java).also { intent ->
-                        intent.putExtra("temperature", currentConditions.main.temp.roundToInt().toString())
+                        intent.putExtra(
+                            "temperature",
+                            currentConditions.main.temp.roundToInt().toString()
+                        )
+                        intent.putExtra("location", currentConditions.name)
                         requireActivity().startService(intent)
                     }
                 }

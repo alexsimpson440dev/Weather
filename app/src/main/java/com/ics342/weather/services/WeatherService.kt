@@ -22,16 +22,23 @@ class WeatherService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Toast.makeText(this, getString(R.string.starting_service), Toast.LENGTH_SHORT).show()
         val temperature = intent?.getStringExtra("temperature")
-        val notification: Notification = getNotification(temperature.orEmpty())
+        val location = intent?.getStringExtra("location")
+        if (temperature == null) {
+            return START_REDELIVER_INTENT
+        }
+        Toast.makeText(this, getString(R.string.starting_service), Toast.LENGTH_SHORT).show()
+        val notification: Notification = getNotification(location.orEmpty(), temperature.orEmpty())
 
         startForeground(NOTIFICATION_ID, notification)
 
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun getNotification(temperature: String = getString(R.string.double_dash)): Notification {
+    private fun getNotification(
+        location: String = "Unknown Location",
+        temperature: String = getString(R.string.double_dash)
+    ): Notification {
         val pendingIntent: PendingIntent =
             getActivity(
                 this,
@@ -41,7 +48,7 @@ class WeatherService : Service() {
             )
 
         return Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle(getString(R.string.current_temperature))
+            .setContentTitle(location)
             .setContentText(temperature + getString(R.string.degree_symbol))
             .setSmallIcon(R.drawable.sun_small)
             .setContentIntent(pendingIntent)
