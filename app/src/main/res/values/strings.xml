@@ -16,7 +16,12 @@
     <string name="zip_code">Zip Code</string>
     <string name="submit">submit</string>
     <string name="ok">ok</string>
+    <string name="degree_symbol">°</string>
     <string name="location_error">Error fetching data for location data provided</string>
     <string name="get_location">Use Current Location</string>
     <string name="request_location_permission">Need to obtain location for local weather</string>
+    <string name="turn_on_notifications">Turn On Notifications</string>
+    <string name="turn_off_notifications">Turn Off Notifications</string>
+    <string name="starting_service">Starting Service</string>
+    <string name="double_dash">--</string>
 </resources>

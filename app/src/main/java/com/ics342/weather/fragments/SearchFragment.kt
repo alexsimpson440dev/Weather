@@ -3,13 +3,16 @@ package com.ics342.weather.fragments
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -17,15 +20,20 @@ import com.google.android.gms.location.*
 import com.ics342.weather.R
 import com.ics342.weather.databinding.FragmentSearchBinding
 import com.ics342.weather.domains.CurrentConditions
+import com.ics342.weather.services.WeatherService
 import com.ics342.weather.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
+@RequiresApi(Build.VERSION_CODES.O)
 class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private lateinit var binding: FragmentSearchBinding
-    @Inject lateinit var viewModel: SearchViewModel
+
+    @Inject
+    lateinit var viewModel: SearchViewModel
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
@@ -33,11 +41,23 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        locationCallback = object : LocationCallback() {}
+
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireContext())
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                if (viewModel.enableNotifications.value == true) {
+                    viewModel.setLocation(locationResult.lastLocation)
+                    viewModel.locationDataObtained()
+                    handleNotificationButton()
+                }
+            }
+        }
         locationRequest = LocationRequest.create()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        locationRequest.interval = 0
+        locationRequest.interval = 1800000 // this should be 30 minutes
+
+        setNotificationButtonText()
 
         viewModel.enableButton.observe(viewLifecycleOwner) { enable ->
             binding.submitButton.isEnabled = enable
@@ -69,6 +89,15 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         binding.getLocationButton.setOnClickListener {
             getCurrentLocation()
+
+            viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
+                navigateToCurrentConditions(currentConditions)
+            }
+        }
+
+        binding.notificationButton.setOnClickListener {
+            viewModel.notificationsButtonClicked()
+            handleNotificationButton()
         }
     }
 
@@ -126,7 +155,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             locationCallback,
             Looper.getMainLooper()
         )
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         getCurrentLocation()
     }
 
@@ -153,6 +181,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
+        if (viewModel.enableNotifications.value == true) {
+            handleNotificationButton()
+            return
+        }
+
         if (requestCode == COARSE_LOCATION_ACCESS_CODE) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCurrentLocation()
@@ -165,9 +198,42 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private fun onLocationObtained(location: Location) {
         viewModel.setLocation(location)
         viewModel.locationDataObtained()
-        viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
-            navigateToCurrentConditions(currentConditions)
+    }
+
+    private fun handleNotificationButton() {
+        if (viewModel.enableNotifications.value == true) {
+            getCurrentLocation()
+            setNotificationButtonText()
+            if (checkPermissions()) {
+                viewModel.currentConditions.observe(viewLifecycleOwner) { currentConditions ->
+                    Intent(requireContext(), WeatherService::class.java).also { intent ->
+                        intent.putExtra(
+                            "temperature",
+                            currentConditions.main.temp.roundToInt().toString()
+                        )
+                        intent.putExtra("location", currentConditions.name)
+                        requireActivity().startService(intent)
+                    }
+                }
+            } else {
+                requestPermission()
+            }
+        } else {
+            binding.notificationButton.text = getString(R.string.turn_on_notifications)
+            Intent(requireContext(), WeatherService::class.java).also { intent ->
+                requireActivity().stopService(intent)
+            }
         }
+    }
+
+    private fun setNotificationButtonText() {
+        val notificationStringId: Int = if (viewModel.enableNotifications.value == true) {
+            R.string.turn_off_notifications
+        } else {
+            R.string.turn_on_notifications
+        }
+
+        binding.notificationButton.text = getString(notificationStringId)
     }
 
     companion object {
